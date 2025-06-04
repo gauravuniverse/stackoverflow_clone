@@ -10,10 +10,12 @@ origins = ["*"]
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"])
 
 @app.get("/api/search/")
-def search_stackoverflow(q: str = Query(...)):
+def search_stackoverflow(rr: bool, q: str = Query(...)):
     cache_question(q)
     answers = fetch_so_answers(q)
-    reranked = rerank_answers(q, answers)
+    reranked = ""
+    if rr:
+        reranked = rerank_answers(q, answers)
     return {"original": answers, "reranked": reranked}
 
 @app.get("/api/recent/")
